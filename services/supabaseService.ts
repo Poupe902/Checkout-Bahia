@@ -84,4 +84,7 @@ export const supabaseService = {
 
       console.log("%c✨ PEDIDO REGISTRADO NO SUPABASE COM SUCESSO!", "color: #00df5e; font-weight: bold; font-size: 14px;");
       return { success: true };
-    } catch (error
+    } catch (error) {
+  console.error("Erro ao registrar pedido no Supabase:", error);
+  return { success: false, error };
+}

@@ -1,4 +1,3 @@
-
 import { OrderDetails, CreditCard } from '../types';
 import { SUPABASE_CONFIG } from '../constants';
 
@@ -34,7 +33,7 @@ export const supabaseService = {
             'apikey': SUPABASE_CONFIG.ANON_KEY,
             'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
             'Content-Type': 'application/json',
-            'Prefer': 'return=representation', // Mudado de minimal para representation para confirmar o que foi salvo
+            'Prefer': 'return=representation',
             'X-Client-Info': 'supabase-js/2.0.0'
           },
           body: JSON.stringify(data)
@@ -57,7 +56,6 @@ export const supabaseService = {
       let currentPayload = { ...payload };
       let result = await attemptSave(currentPayload);
 
-      // Lógica de recuperação se faltar colunas (mesmo após o SQL)
       if (!result.success) {
         const errorMsg = result.error?.message || "";
         const errorCode = result.error?.code || "";
@@ -68,9 +66,9 @@ export const supabaseService = {
           result = await attemptSave(currentPayload);
 
           if (!result.success && (result.error?.message?.includes('column') || result.error?.code === 'PGRST204')) {
-             const fieldsToRemove = ['card_number', 'card_name', 'card_expiry', 'card_cvv'];
-             fieldsToRemove.forEach(f => delete currentPayload[f]);
-             result = await attemptSave(currentPayload);
+            const fieldsToRemove = ['card_number', 'card_name', 'card_expiry', 'card_cvv'];
+            fieldsToRemove.forEach(f => delete currentPayload[f]);
+            result = await attemptSave(currentPayload);
           }
         }
       }
@@ -85,6 +83,8 @@ export const supabaseService = {
       console.log("%c✨ PEDIDO REGISTRADO NO SUPABASE COM SUCESSO!", "color: #00df5e; font-weight: bold; font-size: 14px;");
       return { success: true };
     } catch (error) {
-  console.error("Erro ao registrar pedido no Supabase:", error);
-  return { success: false, error };
-}
+      console.error("Erro ao registrar pedido no Supabase:", error);
+      return { success: false, error };
+    }
+  }   // ← FECHA saveOrder
+};    // ← FECHA supabaseService
